@@ -13,7 +13,7 @@ if (canvas && canvas.getContext) {
             "mousemove",
             function (evt) {
                 // Instanciamos la clase Persona
-                var jugador = new Persona(25, 25);
+                var jugador = new Persona(0, 0);
                 // Creamos la funcion oMousePos y la asignamos a la variable mousePos
                 var mousePos = oMousePos(canvas, evt);
                 // Utilizamos el método setPosicion de la clase Persona
@@ -24,26 +24,39 @@ if (canvas && canvas.getContext) {
                 personas.graficarTodos(context, jugador);
                 // Utilizamos el método graficar de la clase Persona
                 jugador.graficar(context);
-                // Utilizamos el método calcularPorcentaje de la clase Personas
-                // Y se le asigna a la variable result
+                /* Utilizamos el método calcularPorcentaje de la clase Personas
+                Y se le asigna a la variable result */
                 var result = personas.calcularPorcentaje();
                 // Insertamos html en elemento output
                 document.getElementById("output").innerHTML =
-                    `<h1>Porcentaje de Infección: <span style="color: red;">` +
+                    `<h2>Porcentaje de Infección: <span style="color: red;">` +
                     result.porcentaje +
-                    `%</span>
-                     - <span>Cuando k = ` +
+                    `%</span>  - <span>Cuando k = ` +
                     result.k +
-                    `</span></h1>`;
+                    `</span>
+          </h2>`;
             },
             false
         );
+        // Creamos el evento submit del formulario form_set_k
+        document.getElementById("form_set_k").addEventListener("submit", form_set_k);
     }
 }
+/* Creamos la función form_set_k */
+function form_set_k(evt) {
+    evt.preventDefault();
+    var string, value = "";
+    string = $(this).serialize().split("=");
+    value = string[1];
+    personas.k = value;
+    $(this).find("input[name='value_k']").val("");
+    alert("Se cambio el valor de K con éxito");
+}
+
 // Creamos la función oMousePos
 function oMousePos(canvas, evt) {
-    // Obtenemos la posición relativa respecto a la ventana de visualización
-    // Y la asignamos a la variable ClienteRect
+    /* Obtenemos la posición relativa respecto a la ventana de visualización
+    Y la asignamos a la variable ClienteRect */
     var ClientRect = canvas.getBoundingClientRect();
     // Retornamos las posiciones en x, y
     return {

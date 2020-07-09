@@ -2,8 +2,8 @@ class Persona {
     // Creamos el constructor de la clase
     constructor(_x = null, _y = null) {
         // Definimos las propiedades de la clase
-        this.distEuclidiana = 0;
-        this.distManhattan = 0;
+        this.distEuclidiana = 0
+        this.distManhattan = 0
         // Sí se instancia con paramétros
         if (_x != null || _y != null) {
             this.x = _x;
@@ -11,7 +11,7 @@ class Persona {
             this.estado = true;
             this.color = "blue";
         } else { // Si se instacia la clase sin parámetros
-            // Creamos posiciones aleatorias dentro del canvas
+             // Creamos posiciones aleatorias dentro del canvas
             this.x = Math.floor(Math.random() * 1450) + 25;
             this.y = Math.floor(Math.random() * 700) + 25;
             // Sí es igual a 0, es una persona infectada
@@ -27,27 +27,16 @@ class Persona {
     /* Creamos el método graficar, que nos servirá para poder graficar 
     las personas infectas y sanas. También graficar el jugador */
     graficar(context, x = null, y = null) {
-        // Utilizamos el método calcDistancia de la propia clase
-        this.calcDistancia(x, y);
-        // Limpiamos el contexto del canvas
-        context.clearRect(0, 0, context.width, context.height);
-        // Graficamos el contexto
         context.beginPath();
         // Le pasamos un color
         context.fillStyle = this.color;
         // Le pasamos las coordenadas
         context.arc(this.x, this.y, 20, 0, 2 * Math.PI);
-        // Si x o y son nulos, se grafican las personas
-        if (x != null || y != null) {
-            context.moveTo(this.x, this.y);
-            context.lineTo(x, y);
-            context.strokeText("EU: " + this.distEuclidiana + " -- " + "MT: " + this.distManhattan, this.x - 50, this.y + 35);
-        } else { // De lo contrario solo se grafica el jugador
-            context.strokeText("JUGADOR", this.x - 23, this.y + 40);
-        }
+        // Colocamos un texto al jugador
+        context.strokeText("JUGADOR", this.x - 23, this.y + 40);
+        context.closePath();        
         context.stroke();
         context.fill();
-        context.closePath();        
     }
     /* Creamos el método calcDistancia, que nos servirá 
     para poder calcular la distancia euclidiana y manhattan */
@@ -69,7 +58,7 @@ class Personas {
     constructor() {
         // Definimos las propiedades de la clase
         this.nro_personas = 15;
-        this.k = 3;
+        this.k = 4;
         this.personas = [];
         this.simular();
     }
@@ -85,9 +74,24 @@ class Personas {
     graficarTodos(context, p) {
         /* Recorremos todas las personas y las graficamos en el canvas */
         for (var i = 0; i < this.nro_personas; i++) {
-            this.personas[i].graficar(context, p.x, p.y);
+            // Utilizamos el método calcDistancia de la clase Personas
+            this.personas[i].calcDistancia(p.x, p.y);
+            context.beginPath();
+            // Le pasamos un color
+            context.fillStyle = this.personas[i].color;
+            // Le pasamos las coordenadas
+            context.arc(this.personas[i].x, this.personas[i].y, 20, 0, 2 * Math.PI);
+            // Solo se pinta las líneas con los k vecinos más cercanos
+            if (i < this.k) {
+                context.moveTo(this.personas[i].x, this.personas[i].y);
+                context.lineTo(p.x, p.y);
+                context.strokeText("EU: " + this.personas[i].distEuclidiana + " -- " + "MT: " + this.personas[i].distManhattan, this.personas[i].x - 50, this.personas[i].y + 35);
+            }
+            context.closePath();        
+            context.stroke();
+            context.fill();
         }
-        /* Utilizamos el método calcularPorcentaje de la propia clase */
+        // Utilizamos el método calcularPorcentaje de la misma clase
         this.calcularPorcentaje();
     }
     /* Creamos el método calcularPorcentaje */
@@ -96,20 +100,22 @@ class Personas {
         var contI = 0;
         var porcentaje = 0;
         /* Ordenamos ascendentemente el arreglo persnas */
-        this.personas.sort(function(a, b) {
-            return (a.distEuclidiana - b.distEuclidiana)
+        this.personas.sort(function(a, b) { 
+            return (a.distEuclidiana - b.distEuclidiana) 
         });
         /* Contabilizamos las personas infectadas 
         de acuerdo a los k vecinos más cercanos */
-        for (var i = 0; i < this.k; i++) {
-            if (!this.personas[i].estado) contI++; 
+        for (var i = 0; i < this.k; i++) { 
+            if (!this.personas[i].estado) {
+                contI++; 
+            }
         }
         /* Calculamos el porcentaje */
         porcentaje = parseFloat(100 * contI / this.k).toFixed(2);
         /* Retornamos el valor del porcentaje y del k utilizado */
-        return {
+        return { 
             porcentaje: porcentaje, 
-            k: this.k
+            k: this.k 
         };
     }
 }
